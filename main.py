@@ -9,17 +9,22 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 class Scrapper:
+    '''
+    Initiliazing the webdriver and the final data format
+    '''
+
     def __init__(self, product, size, pincode):
+
         self.base = 'https://amazon.in'
         self.final_data = ['Brand', 'Name', 'Price', 'Url', 'Tat']
         self.product = product
         self.size = size
         self.pincode = pincode
-        self.rows = []
         self.driver = webdriver.Chrome(
             executable_path=ChromeDriverManager().install())
 
     def get_url(self, item):
+        # returns the url for the serached product
         item = item.replace(' ', '+')
         url = 'https://www.amazon.in/s?k={}&ref=nb_sb_noss'
         return url.format(item)
@@ -80,6 +85,7 @@ class Scrapper:
         '''
 
     def get_next_page(self, suop):
+        # extracts the url of the next page and returns
         next_p = suop.find(
             'a', {"class": "s-pagination-next"})
         print("next page ======", next_p)
@@ -117,7 +123,8 @@ class Scrapper:
 
     def main(self):
         try:
-
+            # passing the serach  product url to the drive
+            # this takes to the page where all the items are listed
             self.driver.get(self.get_url(self.product))
             time.sleep(3)
             suop = BeautifulSoup(self.driver.page_source, "html.parser")
@@ -127,6 +134,7 @@ class Scrapper:
             # starts from 2nd page if exits
 
             for i in range(2):
+                # going to the next page using the href of next button
                 self.driver.get(self.get_next_page(suop))
                 self.rows = []
                 time.sleep(3)
